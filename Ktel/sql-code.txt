@@ -1,0 +1,12 @@
+******** sql-код создания базы, таблицы, и тестовой записи.
+******** для запуска кода, войдите в mysql и введите по очереди
+******** приведенные ниже строки (6, 8, 10, 12) 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Т.к. для работы программы необходим вход в Mysql , прошу устанавливать ее, запуская в браузере файл istall.php (в этом файле создается специальный файл запоминающий данные для доступа к Mysql)
+
+CREATE DATABASE Ktel CHARACTER SET 'cp1251';
+
+use Ktel;
+
+CREATE TABLE kk (entry_id INT NOT NULL AUTO_INCREMENT, CB_city VARCHAR(64) default NULL, contract_number VARCHAR(64), abonent varchar(128),telephone varchar(15) default NULL,surname varchar(128),name varchar(128),patronymic varchar(128) default NULL,birthdate DATE,postindex varchar(128),country varchar(128),region varchar(128),area_municipal_district varchar(128) default NULL,city varchar(128),street varchar(128),house_number varchar(128),corpus varchar(128) default NULL,flat varchar(128),passport_series varchar(16),passport_number varchar(16),passport_issued_by varchar(128),passport_issued_at DATE,usage_point_address varchar(1024),uridical_appeal_date DATE,dtc DATETIME,dtu DATETIME,PRIMARY KEY (entry_id) ) ENGINE MyISAM;
+
+INSERT INTO kk (CB_city, contract_number, abonent, telephone, surname, name, patronymic, birthdate, postindex, country, region, area_municipal_district, city, street, house_number, corpus, flat, passport_series, passport_number, passport_issued_by, passport_issued_at, usage_point_address, uridical_appeal_date, dtc) VALUES('Ekaterinburg', '1234567890', 'abonent', '11111111111', 'surname','name', 'patronymic','1985-11-11','666666','country', 'region', 'areamunicipaldistrict', 'city', 'street', '1', '2', '3', '4444', '666666', 'passportissued', '1999-1-1', 'usagepointaddress', '1999-1-1', '2020-2-2 00:00:00');
