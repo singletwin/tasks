@@ -1,0 +1,10 @@
+singletwin@inbox.ru
+сервер mail.ru
+
+
+
+$from = array(
+    "D.A. API administrator", // Имя отправителя
+    "singletwin@yandex.ru" // почта отправителя
+);
+

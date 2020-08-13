@@ -6,13 +6,30 @@ ini_set('display_startup_errors', true);
 
 
 
-// Test connection to mysql ______________________________________
-$conn = new mysqli('localhost', 'root', '4Mdefpnu!', 'Resources');
-if ($conn->connect_error) die($conn->connect_error); 
-
 session_start();
 //if (isset($_SESSION)) print("var_dump(S_SESSION) : ".var_dump($_SESSION));
-echo "<br>";
+
+//var_dump($_POST);
+
+
+// Test connection to mysql ______________________________________
+$fh = fopen("mysql.sys", 'r') or die("Файл не существует или...");
+$text = fread($fh, 180); fclose($fh);
+$mysqlenter = explode("\n",$text);
+$username = $mysqlenter[0]; $host = $mysqlenter[1]; $password = $mysqlenter[2]; $database = $mysqlenter[3];
+$conn = new mysqli($host, $username, $password, $database);
+if ($conn->connect_error) die($conn->connect_error);
+
+
+// ************** HTML starts here ***********
+echo <<<_HTML
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>...WELCOME...</title>
+  </head>
+  <body>
+_HTML;
 
 
 if (isset($_POST['username']) && isset($_POST['password']))
@@ -20,7 +37,7 @@ if (isset($_POST['username']) && isset($_POST['password']))
 	$username = $_POST['username'];
 	$password = $_POST['password'];
 	//echo "var_dump(S_POST) : ";var_dump($_POST);
-	echo "<br>";
+
 
 
   // ****************** pASSWORD vERIFICATION ************************
@@ -32,67 +49,88 @@ if (isset($_POST['username']) && isset($_POST['password']))
 	//print("var_dump Spassword_hash : ".var_dump($password_hash));
 	if (password_verify($password_entered, $password_hash[0]))
 	{ 
-		echo <<<_VERIFY
-		<script>
-			var passok = " ツ Glad to see You, $username!! Godspeed! ☦ ";
-			alert(passok);
-		</script>
-_VERIFY;
+		echo "Вы вошли. Добро пожаловать! ";
+		echo "<br>";
+		echo <<<_MENU
+		<br>
+		<a href='table.php'> > Просмотр / Редактирование записей < </a>
+		<br>
+		<a href='edit.php'> > Создание новой записи < </a>
+		<br><br>
+		<button><a href='exit.php'> Выйти </a></button>
+		<br>
+_MENU;
 		$_SESSION['username'] = $username;
 		$_SESSION['password'] = $password;
 	}
-	else { echo "<script>alert(' Wrong!  ☹ ')</script>"; }
+	elseif (isset($_SESSION['username']))
+	{
+		echo <<<_MENU
+		<br>
+		<a href='table.php'> > Просмотр / Редактирование записей < </a>
+		<br>
+		<a href='edit.php'> > Создание новой записи < </a>
+		<br><br>
+		<button><a href='exit.php'> Выйти </a></button>
+		<br>
+_MENU;
+	}
+	elseif ( ($_POST['username'] === '') AND ($_POST['password'] === '') )
+	{
+		//var_dump($_POST);
+		echo <<<_NOINPUT
+			...✏ Введите имя пользователя и пароль...
+			<br>
+		<span>
+			<form method="post" action="index.php" onSubmit="">
+		        <input type="text" size="8" maxlength="64" name="username" title="...✍" placeholder="...✍ имя " >
+		        <input type='password' size="8" maxlength="64" name="password" placeholder="...✍ пароль">
+		        <input type="submit" value=" Вход ">
+	        </form>
+	    </span>
+	    Если вы все ещё не сделали этого, необходимо 
+	    <a href="register.php"> >>> зарегестрироваться <<< </a>
+_NOINPUT;
+	}
+	else 
+	{
+		echo "Не верно введены имя пользователя и пароль! Попробуйте снова... ";
+		echo "<br>";
+		echo <<<_INVALIDINPUT
+		<span>
+			<form method="post" action="index.php" onSubmit="">
+		        <input type="text" size="8" maxlength="64" name="username" title="...✍" placeholder="...✍ имя" >
+		        <input type='password' size="8" maxlength="64" name="password" placeholder="...✍ пароль">
+		        <input type="submit" value=" Вход ">
+	        </form>
+	    </span>
+	    Если вы все ещё не сделали этого, необходимо 
+	    <a href="register.php"> >>> зарегестрироваться <<< </a>
+_INVALIDINPUT;
+	}
 }
-
-
-// IF PASSWORD MATCHED THEN YOU ARE LOGED IN
-if (isset($_SESSION['username']))
-  {
-    $user     = $_SESSION['username'];
-    $loggedin = TRUE;
-  }
-else $loggedin = FALSE;
-
-
-if ($loggedin)
+else
 {
-	echo <<<_LOGGEDIN
-	<span id='indexreg'><button id="indexlogout"><a href="exit.php"> Выйти </a></button></span>
-	<br>
-	<br>
-	<div>VIEW / EDIT</div>
-	<div>NEW ENTRY</div>
-	<br>
-_LOGGEDIN;
+		echo <<<_NOINPUT
+			...✏ Введите имя пользователя и пароль...
+			<br>
+		<span>
+			<form method="post" action="index.php" onSubmit="">
+		        <input type="text" size="8" maxlength="64" name="username" title="...✍" placeholder="...✍ имя" >
+		        <input type='password' size="8" maxlength="64" name="password" placeholder="...✍ пароль">
+		        <input type="submit" value=" Вход ">
+	        </form>
+	    </span>
+
+	    Если вы все ещё не сделали этого, необходимо 
+	    <a href="register.php"> >>> зарегестрироваться <<< </a>
+_NOINPUT;
 }
 
 
 
-echo <<<_HTML
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>...WELCOME...</title>
-  </head>
-  <body>
-_HTML;
 
 
-if (!$loggedin)
-{
-echo <<<_GUEST
-    <span>
-        <form method="post" action="index.php">
-        <legend>...✏ Введите имя пользователя и пароль...</legend>
-        <br>
-        <input type="text" size="12" maxlength="64" name="username" title="Не используйте запрещенные символы, пожалуйста" placeholder="...✍ имя пользователя" pattern="[\w\.!#~@-]{1,63}" required>
-        <input type='password' size="8" maxlength="64" name="password" placeholder="...✍ пароль"  title="Не используйте запрещенные символы, пожалуйста" pattern="[\w\.!#~@-]{1,255}" required>
-        <input type="submit" value=" Вход ">
-        </form>
-        <p><br>Для использования приложения<br> необходимо <a id="register" href="register.php">->>> зарегестрироваться <<<-</a>
-    </span>
-_GUEST;
-}
 
 
 
